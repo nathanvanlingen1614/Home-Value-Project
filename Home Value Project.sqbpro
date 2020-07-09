@@ -1,18 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Owner/box o stuf/Databases/Home Value Project.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure query browser pragmas" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1059"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/><expanded_item id="4" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainhome_value_data"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="home_value_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="6" mode="1"/></sort><column_widths><column index="1" value="65"/><column index="2" value="52"/><column index="3" value="43"/><column index="4" value="217"/><column index="5" value="91"/><column index="6" value="54"/><column index="7" value="56"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Distint Zip Codes">SELECT COUNT(DISTINCT zip_code)
-FROM home_value_data;</sql><sql name="Zip Codes by State">SELECT state, COUNT(DISTINCT zip_code)
-FROM home_value_data
-GROUP BY state
-ORDER BY COUNT(DISTINCT zip_code) DESC;</sql><sql name="Range of Years">SELECT DISTINCT substr(date, 1, 4) 
-FROM home_value_data
-ORDER BY 1 DESC;</sql><sql name="Recent Range of Home values ">CREATE TABLE IF NOT EXISTS recent_month AS
-	SELECT *
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Owner/box o stuf/Databases/Home-Value-Project/Home Value Project.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure query browser pragmas" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1059"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/><expanded_item id="4" parent="1"/></tab_structure><tab_browse><current_table name="4,12:mainrecent_month"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="home_value_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="6" mode="1"/></sort><column_widths><column index="1" value="65"/><column index="2" value="52"/><column index="3" value="43"/><column index="4" value="217"/><column index="5" value="91"/><column index="6" value="54"/><column index="7" value="56"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="recent_month" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="65"/><column index="2" value="145"/><column index="3" value="43"/><column index="4" value="260"/><column index="5" value="141"/><column index="6" value="54"/><column index="7" value="63"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Percent change by State">CREATE TEMP TABLE IF NOT EXISTS homes_1997 AS
+	SELECT state, ROUND(AVG(value)) AS &quot;value_1997&quot;
+ 	FROM home_value_data
+	WHERE 
+		substr(date, 1, 4) = '1997'
+	GROUP BY 1
+;
+CREATE TEMP TABLE IF NOT EXISTS homes_2007 AS
+	SELECT state, ROUND(AVG(value)) AS &quot;value_2007&quot;
 	FROM home_value_data
-	WHERE date = '2018-11'
-	ORDER BY value DESC;
+	WHERE 
+		substr(date, 1, 4) = '2007'
+	GROUP BY 1
+;
+CREATE TEMP TABLE IF NOT EXISTS homes_2017 AS
+	SELECT state, ROUND(AVG(value)) AS &quot;value_2017&quot;
+	FROM home_value_data
+	WHERE 
+		substr(date, 1, 4) = '2017'
+	GROUP BY 1
+;
 
-
-
-</sql><sql name="SQL 8">SELECT state, ROUND(AVG(value))
-FROM recent_month
+SELECT homes_1997.state, homes_1997.value_1997, homes_2007.value_2007, ROUND(((homes_2007.value_2007 - homes_1997.value_1997) / homes_1997.value_1997) * 100) AS &quot;percent change&quot;
+FROM homes_1997 INNER JOIN homes_2007 ON homes_1997.state = homes_2007.state</sql><sql name="create_table_recent_month.sql">CREATE TABLE IF NOT EXISTS recent_month AS
+	SELECT *
+	FROM home_value_data
+	WHERE date = '2018-11'
+	ORDER BY value DESC;
+
+
+
+</sql><sql name="SQL 2"></sql><sql name="average_value_2017.sql">SELECT state, ROUND(AVG(value)), substr(date, 1, 4) 
+FROM home_value_data
+WHERE 
+	substr(date, 1, 4) = '2017'
 GROUP BY 1
 ORDER BY 2 DESC;</sql><current_tab id="0"/></tab_sql></sqlb_project>
